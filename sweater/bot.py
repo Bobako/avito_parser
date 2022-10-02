@@ -1,6 +1,6 @@
 import telebot
 from telebot import types
-
+from sweater.models import Query
 from sweater import db
 
 bot = telebot.TeleBot("5604364570:AAGEDPpjj6doQriHWMJjCvUe4ULs2VDHwfg")
@@ -26,7 +26,7 @@ login_id = []
 def start(message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.row('/password')
-    bot.send_message(message.chat.id, 'Введите пароль',
+    bot.send_message(message.chat.id, 'Введите пароль:',
                      reply_markup=keyboard)
 
 
@@ -46,10 +46,13 @@ def new_product_query(message):
     send = bot.send_message(message.chat.id, "Введите наименование товара:")
     bot.register_next_step_handler(send, new_product)
 
+
 def new_product(message):
     query_name = message.text
-
-
+    query_obj = Query(query_name)
+    with db.session() as session:
+        session.add(query_obj)
+        bot.send_message(message.chat.id, "Наименование внесено в базу данных.")
 
 
 @bot.message_handler(content_types=['text'])
