@@ -2,16 +2,9 @@ import telebot
 from telebot import types
 from sweater.models import Query
 from sweater import db
+from sweater.avito_parser import query_products
 
 bot = telebot.TeleBot("5604364570:AAGEDPpjj6doQriHWMJjCvUe4ULs2VDHwfg")
-
-# conn = psycopg2.connect(database="avito_db",
-#                        user="postgres",
-#                        password="123",
-#                        host="localhost",
-#                        port="5432")
-
-# cursor = conn.cursor()
 
 
 login_id = []
@@ -48,6 +41,9 @@ def new_product_query(message):
 
 
 def new_product(message):
+    if message.text == 'Отмена':
+        bot.send_message(message.chat.id, "Отмена, введите команду заново")
+        return
     query_name = message.text
     query_obj = Query(query_name)
     with db.session() as session:
@@ -59,3 +55,7 @@ def new_product(message):
 def start_message(message):
     if message.text.lower() == 'avito':
         login_id.append(message.chat.id)
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.row('/new', '/products')
+        bot.send_message(message.chat.id, 'Добро пожаловать!',
+                         reply_markup=keyboard)
