@@ -110,7 +110,7 @@ def query_old():
         )).all()
         for query in queries:
             parsed = True
-            print("пошла мазута по " + query.name)
+            print("пошли запросы по " + query.name)
             products = query_products(query.name)
             print(products)
             for product in products:
