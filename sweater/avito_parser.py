@@ -105,10 +105,12 @@ def query_old():
             Query.last_update <= datetime.datetime.now() - datetime.timedelta(3600 * 2),
             Query.last_update == None
         )).all()
+        print(queries)
         for query in queries:
             parsed = True
-            logging.info("пошла мазута по" + query.name)
+            print("пошла мазута по" + query.name)
             products = query_products(query.name)
+            print(products)
             for product in products:
                 session.add(product)
             query.last_update = datetime.datetime.now()
@@ -116,7 +118,7 @@ def query_old():
 
 
 def run():
-    logging.info("соляра крутится")
+    print('парсер крутится')
     while True:
         if not query_old():
             time.sleep(60)
