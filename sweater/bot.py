@@ -79,7 +79,7 @@ def start_message(message):
     if message.text.lower() == 'avito':
         login_id.append(message.chat.id)
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.row('/new', '/products', 'Отмена')
+        keyboard.row('/new', '/all_products', 'Отмена')
         bot.send_message(message.chat.id, 'Добро пожаловать!',
                          reply_markup=keyboard)
 
