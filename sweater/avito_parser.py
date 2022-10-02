@@ -97,7 +97,7 @@ def update_all():
     with db.session() as session:
         products = session.query(Product).all()
         for product in products:
-            product.update(**get_product_price(product.link))
+            product.update(**get_product_price(product.url))
             time.sleep(10)
 
 
