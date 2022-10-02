@@ -1,10 +1,14 @@
+import datetime
 import difflib
+import logging
+import time
 
 import requests
+import sqlalchemy
 from bs4 import BeautifulSoup
 
 from sweater import db
-from sweater.models import Product
+from sweater.models import Product, Query
 
 BASE_URL = "https://www.avito.ru"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"
@@ -70,6 +74,7 @@ def get_sellers_products(seller_url):
 
 
 def query_products(query_name):
+    """Get models.Product objs from query results"""
     url = "https://www.avito.ru/moskva?metro=9-131&q=" + query_name.replace(" ", "+")
     product_dicts = get_products(url)
     products_objs = []
@@ -82,11 +87,40 @@ def is_similar(str1, str2):
     normalized1 = str1.lower()
     normalized2 = str2.lower()
     matcher = difflib.SequenceMatcher(None, normalized1, normalized2)
-    return matcher.ratio()
+    return matcher.ratio() >= 0.8
+
+
+def update_all():
+    with db.session() as session:
+        products = session.query(Product).all()
+        for product in products:
+            product.update(**get_product_price(product.link))
+            time.sleep(10)
+
+
+def query_old():
+    parsed = False
+    with db.session() as session:
+        queries = session.query(Query).filter(sqlalchemy.or_(
+            Query.last_update <= datetime.datetime.now() - datetime.timedelta(3600 * 2),
+            Query.last_update == None
+        )).all()
+        for query in queries:
+            parsed = True
+            logging.info("пошла мазута по" + query.name)
+            products = query_products(query.name)
+            for product in products:
+                session.add(product)
+    return parsed
 
 
 def run():
-    pass
+    logging.info("соляра крутится")
+    while True:
+        if not query_old():
+            time.sleep(60)
+        if datetime.datetime.now().hour % 6 == 0 and datetime.datetime.now().minute == 0:
+            update_all()
 
 
 if __name__ == '__main__':

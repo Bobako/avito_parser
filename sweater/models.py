@@ -75,6 +75,7 @@ class Product(Base):
 class Query(Base):
     __tablename__ = "query"
     name = Column(String, primary_key=True)
+    last_update = Column(DateTime)
 
     def __init__(self, query_name):
         self.name = query_name
