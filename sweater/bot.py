@@ -43,5 +43,3 @@ def start_message(message):
         return
     bot.send_message(message.chat.id, "Вывод...")
 
-
-bot.infinity_polling()
