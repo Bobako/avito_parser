@@ -22,6 +22,7 @@ def test():
         obj = session.query(Class).first()
 
 
+@bot.message_handler(commands=['password'])
 def password(message):
     login = False
     if message.text.lower() == 'avito':
