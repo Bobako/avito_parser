@@ -22,6 +22,7 @@ class NotFound(Exception):
 def get_soup(url: str) -> BeautifulSoup:
     response = requests.get(url, headers={"user-agent": USER_AGENT})
     if response.status_code != 200:
+        print(response.status_code)
         raise NotFound
     soup = BeautifulSoup(response.text, 'html.parser')
     return soup
