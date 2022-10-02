@@ -111,6 +111,7 @@ def query_old():
             products = query_products(query.name)
             for product in products:
                 session.add(product)
+            query.last_update = datetime.datetime.now()
     return parsed
 
 
