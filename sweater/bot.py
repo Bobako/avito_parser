@@ -50,7 +50,7 @@ def start_message(message):
         return
     with db.session() as session:
         products = session.query(Product).all()
-    send = "\n".join(products)
+        send = "\n".join([str(product) for product in products])
     bot.send_message(message.chat.id, send)
 
 
