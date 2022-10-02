@@ -68,6 +68,9 @@ class Product(Base):
         self.price = price
         self.last_update = datetime.datetime.now()
 
+    def __repr__(self):
+        return f"{self.name} - {self.price}:{self.url}"
+
 
 class Query(Base):
     __tablename__ = "query"

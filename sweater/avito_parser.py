@@ -1,5 +1,10 @@
+import difflib
+
 import requests
 from bs4 import BeautifulSoup
+
+from sweater import db
+from sweater.models import Product
 
 BASE_URL = "https://www.avito.ru"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36"
@@ -62,6 +67,26 @@ def get_sellers_products(seller_url):
             "seller_link": seller_url
         })
     return products_dicts
+
+
+def query_products(query_name):
+    url = "https://www.avito.ru/moskva?metro=9-131&q=" + query_name.replace(" ", "+")
+    product_dicts = get_products(url)
+    products_objs = []
+    for product_dict in product_dicts:
+        products_objs.append(Product(**product_dict))
+    return products_objs
+
+
+def is_similar(str1, str2):
+    normalized1 = str1.lower()
+    normalized2 = str2.lower()
+    matcher = difflib.SequenceMatcher(None, normalized1, normalized2)
+    return matcher.ratio()
+
+
+def run():
+    pass
 
 
 if __name__ == '__main__':
