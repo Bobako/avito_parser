@@ -32,7 +32,18 @@ def new_product_query(message):
     bot.register_next_step_handler(send, new_product)
 
 
-@bot.message_handler(commands=['products'])
+def new_product(message):
+    if message.text == 'Отмена':
+        bot.send_message(message.chat.id, "Отмена, введите команду заново")
+        return
+    query_name = message.text
+    query_obj = Query(query_name)
+    with db.session() as session:
+        session.add(query_obj)
+        bot.send_message(message.chat.id, "Наименование внесено в базу данных.")
+
+
+@bot.message_handler(commands=['all_products'])
 def start_message(message):
     if message.chat.id not in login_id:
         bot.send_message(message.chat.id, "Сначала введите пароль.")
@@ -43,15 +54,24 @@ def start_message(message):
     bot.send_message(message.chat.id, send)
 
 
-def new_product(message):
+@bot.message_handler(commands=['product'])
+def start_message(message):
+    if message.chat.id not in login_id:
+        bot.send_message(message.chat.id, "Сначала введите пароль.")
+        return
+    send = bot.send_message(message.chat.id, "Введите значение фильтра:")
+    bot.register_next_step_handler(send, product_print)
+
+
+def product_print(message):
     if message.text == 'Отмена':
         bot.send_message(message.chat.id, "Отмена, введите команду заново")
         return
-    query_name = message.text
-    query_obj = Query(query_name)
+    req_name = message.text
     with db.session() as session:
-        session.add(query_obj)
-        bot.send_message(message.chat.id, "Наименование внесено в базу данных.")
+        filtered = session.query(Product).filter(Product.field == req_name).all()
+        msg = '\n'.join(filtered)
+    bot.send_message(message.chat.id, msg)
 
 
 @bot.message_handler(content_types=['text'])
