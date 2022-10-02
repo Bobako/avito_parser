@@ -18,7 +18,7 @@ login_id = []
 @bot.message_handler(commands=['start'])
 def start(message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.row('/password')
+    keyboard.row('/start')
     bot.send_message(message.chat.id, 'Введите пароль:',
                      reply_markup=keyboard)
 
