@@ -46,5 +46,11 @@ def start_message(message):
     if message.chat.id in login_id:
         password(message)
 
+@bot.message_handler(commands=['products'])
+def start_message(message):
+    if message.chat.id not in login_id:
+        bot.send_message(message.chat.id, "а пароль где")
+        return
+    bot.send_message(message.chat.id, "вот товары")
 
 bot.infinity_polling()
