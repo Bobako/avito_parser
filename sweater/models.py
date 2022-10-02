@@ -56,8 +56,8 @@ class Product(Base):
     query_name = Column(String)
     last_update = Column(DateTime)
 
-    def __init__(self, url, name, price, query_name, seller_link):
-        self.url = url
+    def __init__(self, link, name, price, query_name, seller_link):
+        self.url = link
         self.name = name
         self.price = price
         self.query_name = query_name

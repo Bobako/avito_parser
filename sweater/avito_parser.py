@@ -5,6 +5,7 @@ import time
 
 import requests
 import sqlalchemy
+import sqlalchemy.exc
 from bs4 import BeautifulSoup
 
 from sweater import db
@@ -33,7 +34,9 @@ def get_products(url):
         return []
     products = soup.find_all("div", class_="iva-item-content-rejJg")
     products_dicts = []
-    for product in products:
+    for i, product in enumerate(products):
+        if i == 5:
+            break
         product_dict = {
             "name": product.find("a", class_="link-link-MbQDP").text,
             "price": int(product.find("meta", itemprop="price").get("content")),
@@ -79,7 +82,7 @@ def query_products(query_name):
     product_dicts = get_products(url)
     products_objs = []
     for product_dict in product_dicts:
-        products_objs.append(Product(**product_dict))
+        products_objs.append(Product(**product_dict, query_name=query_name))
     return products_objs
 
 
@@ -105,14 +108,17 @@ def query_old():
             Query.last_update <= datetime.datetime.now() - datetime.timedelta(3600 * 2),
             Query.last_update == None
         )).all()
-        print(queries)
         for query in queries:
             parsed = True
-            print("пошла мазута по" + query.name)
+            print("пошла мазута по " + query.name)
             products = query_products(query.name)
             print(products)
             for product in products:
-                session.add(product)
+                try:
+                    session.add(product)
+                    session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    session.rollback()
             query.last_update = datetime.datetime.now()
     return parsed
 
