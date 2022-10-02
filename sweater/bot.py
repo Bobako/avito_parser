@@ -70,7 +70,7 @@ def product_print(message):
     req_name = message.text
     with db.session() as session:
         filtered = session.query(Product).filter(Product.field == req_name).all()
-        msg = '\n'.join(filtered)
+        msg = '\n'.join([str(product) for product in filtered])
     bot.send_message(message.chat.id, msg)
 
 
