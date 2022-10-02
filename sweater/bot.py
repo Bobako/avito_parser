@@ -82,4 +82,3 @@ def start_message(message):
         keyboard.row('/new', '/all_products', 'Отмена')
         bot.send_message(message.chat.id, 'Добро пожаловать!',
                          reply_markup=keyboard)
-
