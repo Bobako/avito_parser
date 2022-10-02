@@ -1,22 +1,25 @@
-#import psycopg2
-
 import telebot
 from telebot import types
 
+from sweater import db
 
 bot = telebot.TeleBot("5604364570:AAGEDPpjj6doQriHWMJjCvUe4ULs2VDHwfg")
 
-#conn = psycopg2.connect(database="avito_db",
+# conn = psycopg2.connect(database="avito_db",
 #                        user="postgres",
 #                        password="123",
 #                        host="localhost",
 #                        port="5432")
 
-#cursor = conn.cursor()
+# cursor = conn.cursor()
 
 
 login_id = []
 
+
+def test():
+    with db.session() as session:
+        obj = session.query(Class).first()
 
 
 def password(message):
@@ -35,14 +38,12 @@ def start(message):
                      reply_markup=keyboard)
 
 
-
 @bot.message_handler(content_types=['text'])
 def start_message(message):
     if message.text.lower() == 'avito':
         login_id.append(message.chat.id)
     if message.chat.id in login_id:
         password(message)
-
 
 
 bot.infinity_polling()
