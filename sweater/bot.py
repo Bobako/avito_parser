@@ -1,6 +1,5 @@
 #import psycopg2
 
-import datetime
 import telebot
 from telebot import types
 
@@ -39,11 +38,10 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def start_message(message):
-    nom = -1
     if message.text.lower() == 'avito':
         login_id.append(message.chat.id)
     if message.chat.id in login_id:
-        password()
+        password(message)
 
 
 
